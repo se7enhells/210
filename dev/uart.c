@@ -41,12 +41,12 @@ void uart_init()
 	
 }
 
-
 void putc(unsigned char ch)
 {
 	while(!(UTRSTAT0 & (1<<2)));//µÈ´ý·¢»º³åÇø¿Õ
 	UTXH0 = ch;	
 }
+
 unsigned char getc(void)
 {
 	unsigned char ret;
