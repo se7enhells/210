@@ -5,8 +5,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define BUFSIZE                 (16*1024)
-#define IMG_SIZE                (16*1024)
+#define BUFSIZE                 (32*1024)
+#define IMG_SIZE                (32*1024)
 #define SPL_HEADER_SIZE         16
 #define SPL_HEADER              "S5PC110 HEADER  "
 
@@ -69,7 +69,7 @@ int main (int argc, char *argv[])
 	// 4. 计算校验和
  	// 4.1 从第16byte开始统计buffer中共有几个1
 	a = Buf + SPL_HEADER_SIZE;
-	for(i = 0, checksum = 0; i < IMG_SIZE - SPL_HEADER_SIZE; i++)
+	for(i = 0, checksum = 0; i < 16*1024 - SPL_HEADER_SIZE; i++)
 		checksum += (0x000000FF) & *a++;
 	// 4.2 将校验和保存在buffer[8~15]
 	a = Buf + 8;
