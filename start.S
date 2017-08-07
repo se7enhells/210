@@ -52,8 +52,9 @@ reset:
 		bl disable_mmu
 		bl init_clock
 		bl mem_init
-		bl copy_to_ram
 		bl init_stack
+		bl nand_init
+		bl copy_to_ram
 		bl clean_bss
 		ldr pc, =gboot_main
 @		bl light_led
@@ -124,10 +125,20 @@ init_clock:
 	mov pc, lr
 
 copy_to_ram:
-	ldr r0, =0xd0020010
-	ldr r1, =0x20008000
-	add r3, r0, #1024*4
-
+	//ldr r0, =0xd0020010
+	//ldr r1, =0x20008000
+	//add r3, r0, #1024*4
+	
+	mov r0, #0
+	ldr r1, _start
+	ldr r2, =bss_end
+	sub r2, r2,r1
+	mov ip, lr
+	bl nand_to_ram
+	mov lr, ip
+	mov pc, lr
+	
+	
 copy_loop:
 	ldr r2, [r0], #4
 	str r2, [r1], #4
@@ -136,8 +147,11 @@ copy_loop:
 	mov pc, lr
 
 init_stack:
-	ldr sp, =0x24000000
-	mov pc ,lr
+	msr cpsr_c, #0xd2
+	ldr sp, =0x23000000	@此处实际设置的是r13_irq			
+	msr cpsr_c, #0xd3
+	ldr sp, =0x24000000	@此处实际设置的是r13_svc
+	mov pc, lr
 
 clean_bss:
 	ldr r0, =bss_start
@@ -152,13 +166,11 @@ clean_loop:
 	bne clean_loop
 	mov pc, lr
 
-#define GPJ2CON 0xE0200280
-#define GPJ2DAT 0xE0200284
 light_led:
-	ldr	R0,=GPJ2CON      
-	mov	R1,#0x00001111
+	ldr	R0,=0xE0200280      
+	mov	R1,#0x1
 	str	R1,[R0]             
-	ldr	R0,=GPJ2DAT      
+	ldr	R0,=0xE0200284      
 	mov	R1,#0x0                   
 	str	R1,[R0]             
 	mov pc, lr

@@ -22,6 +22,8 @@
 #define DMC0_TIMING_DATA        0x24240000
 #define DMC0_TIMING_PWR         0x0BDC0343      
 
+
+
 .globl mem_init
 mem_init:
 	@ step 2.1
@@ -29,10 +31,16 @@ mem_init:
 	ldr	r1, =0x00101000				
 	str	r1, [r0]
 	
+	ldr	r0, =DMC_PHYCONTROL1
+	ldr	r1, =0x00000086				
+	str	r1, [r0]
+	
 	@ step 2.2
 	ldr	r0, =DMC_PHYCONTROL0
 	ldr	r1, =0x00101002					
 	str	r1, [r0]
+	
+
 	
 	@ step 4
 	ldr	r0, =DMC_PHYCONTROL0
