@@ -18,7 +18,7 @@
 #define TWRPH0 7
 #define TWRPH1 7
 
-//发片选
+/* 选中 */
 void select_chip(void)
 {
     NFCONT &= ~(1<<1);	
