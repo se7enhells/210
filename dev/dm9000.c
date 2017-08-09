@@ -1,4 +1,6 @@
-#include <dm9000.h>
+#include "dm9000.h"
+#include "arp.h"
+
 #define SROM_BW       			( *((volatile unsigned int *)0x00000000) )
 #define SROM_BC0     			( *((volatile unsigned int *)0xE8000004) )
 #define GPH0CON     			( *((volatile unsigned int *)0xE0200C00) )
@@ -12,17 +14,20 @@
 #define DM_ADD (*((volatile unsigned short *)0x20000300))
 #define DM_DAT (*((volatile unsigned short *)0x20000304))
 
-typedef unsigned int u32;
-typedef unsigned short u16;
-typedef unsigned char u8;
-
 
 /*函数声明*/
 void dm9000_isr(void);
 
 /*变量定义*/
+u8 *buffer_tx  = (char*)(&arpbuf_tx);
+u8 *buffer_rx  = (char*)(&arpbuf_rx);
+
 u8 mac_addr[6] = {9,8,7,6,5,4};
-u8 buffer[1000];
+u8 ip_addr[4] = {192,168,152,100};
+u8 host_mac_addr[6] = {0xff,0xff,0xff,0xff,0xff,0xff};
+u8 host_ip_addr[4] = {192,168,152,1};
+u16 packet_len;
+
 
 /*选中DM9000*/
 void cs_init()
@@ -240,10 +245,16 @@ u32 dm9000_rx(u8 *data)
 
 void dm9000_isr()
 {
-    u32 i;
-    i = dm9000_rx(buffer);	
-     
+    packet_len = dm9000_rx(buffer_rx);	
+    arp_process(); 
    /* 清除中断 */    
     EXT_INT_0_PEND &=  ~(1<<7); 	
     VIC0ADDRESS = 0;
+}
+
+
+void dm9000_arp()
+{
+    while(1)
+        arp_request();	
 }

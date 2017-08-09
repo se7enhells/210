@@ -1,4 +1,4 @@
-objs := button.o  interrupt.o led.o mmu.o uart.o nand.o dma.o lcd.o dm9000.o
+objs := button.o  interrupt.o led.o mmu.o uart.o nand.o dma.o lcd.o dm9000.o arp.o
 
 all :  $(objs)
 	arm-linux-ld -r -o dev.o $^
@@ -7,7 +7,7 @@ all :  $(objs)
 	arm-linux-gcc ${CFLAGS} -c $^
 
 %.o : %.c
-	arm-linux-gcc $(CFLAGS) -c $^
+	arm-linux-gcc ${CFLAGS} -c $^
 
 clean:
 	rm -f *.o	
