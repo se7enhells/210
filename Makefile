@@ -1,4 +1,4 @@
-OBJS := start.o main.o mem.o dev/dev.o lib/lib.o
+OBJS := start.o main.o mem.o dev/dev.o lib/lib.o net/net.o
 	
 CFLAGS := -fno-builtin -I$(shell pwd)/include
 export CFLAGS
@@ -20,6 +20,9 @@ lib/lib.o :
 	
 dev/dev.o :
 	make -C dev all	
+	
+net/net.o :
+	make -C net all	
 	
 .PHONY: clean
 clean:

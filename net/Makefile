@@ -1,7 +1,7 @@
-objs := button.o  interrupt.o led.o mmu.o uart.o nand.o dma.o lcd.o dm9000.o 
+objs := arp.o tftp.o
 
 all :  $(objs)
-	arm-linux-ld -r -o dev.o $^
+	arm-linux-ld -r -o net.o $^
 	
 %.o : %.S
 	arm-linux-gcc ${CFLAGS} -c $^

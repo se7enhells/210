@@ -19,8 +19,7 @@
 void dm9000_isr(void);
 
 /*变量定义*/
-u8 *buffer_tx  = (char*)(&arpbuf_tx);
-u8 *buffer_rx  = (char*)(&arpbuf_rx);
+u8 buffer[1500];// = (char*)(&arpbuf);    //DM9000 发送 接收 缓存区
 
 u8 mac_addr[6] = {9,8,7,6,5,4};
 u8 ip_addr[4] = {192,168,152,100};
@@ -142,7 +141,7 @@ void MAC_init(void)
 void dm9000_enable(void)
 {
 	/*激活DM9000*/
-   	dm9000_reg_write(DM9000_RCR, RCR_DIS_LONG | RCR_DIS_CRC | RCR_RXEN);
+   	dm9000_reg_write(DM9000_RCR, RCR_DIS_LONG | RCR_DIS_CRC | RCR_RXEN|RCR_ALL);
 	/* Enable TX/RX interrupt mask */
 	dm9000_reg_write(DM9000_IMR, IMR_PAR);
 }
@@ -212,7 +211,7 @@ void dm9000_tx(u8 *data,u32 length)
 
 u32 dm9000_rx(u8 *data)
 {
-    u8 status,len;
+    u16 status,len;
     u16 tmp;
     u32 i;
     
@@ -245,8 +244,11 @@ u32 dm9000_rx(u8 *data)
 
 void dm9000_isr()
 {
-    packet_len = dm9000_rx(buffer_rx);	
-    arp_process(); 
+    packet_len = dm9000_rx(&buffer[0]);	 //获取接受数据
+	
+	net_handle();						//网络处理
+    
+	
    /* 清除中断 */    
     EXT_INT_0_PEND &=  ~(1<<7); 	
     VIC0ADDRESS = 0;
