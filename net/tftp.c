@@ -3,9 +3,10 @@
 #include "string.h"
 #include "arp.h"
 
+#define SDRAM_KERNEL_START ( 0x21000000 )
 
 u8 tftp_sendbuf[1024];   //tftp 发送 缓冲区
-u32* tftp_down_addr = 0x21000000; //tftp 接收 缓冲区  这里选择开发板内存位置 用于tftp 下载程序
+u8* tftp_down_addr ; //tftp 接收 缓冲区  这里选择开发板内存位置 用于tftp 下载程序
 u16 curblock = 1; //块编码 初始值 
 
 
@@ -143,10 +144,11 @@ void tftp_process(u8 *buf, u32 len, u16 port)
 	{
 		if(  curblock == HON(tftp_p->blocknum) )
      	{
+     	      tftp_down_addr = (u8*)( SDRAM_KERNEL_START + (curblock-1)*512);
 			//接受数据
 			for( i = 0; i < tftp_len-4; i++)
 			{
-				*(tftp_down_addr) = *(tftp_p->data+i);
+				*(tftp_down_addr++) = *(tftp_p->data+i);
 			}
 		
 			//发送应答包
@@ -156,6 +158,7 @@ void tftp_process(u8 *buf, u32 len, u16 port)
 			if ((tftp_len-4)<512)
 			{
                 curblock = 1;
+				printf("tftp donwload over!\n\r");
 			}
 		}
 	}

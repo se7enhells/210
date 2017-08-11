@@ -1,4 +1,4 @@
-OBJS := start.o main.o mem.o dev/dev.o lib/lib.o net/net.o
+OBJS := start.o main.o mem.o boot.o dev/dev.o lib/lib.o net/net.o 
 	
 CFLAGS := -fno-builtin -I$(shell pwd)/include
 export CFLAGS

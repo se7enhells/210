@@ -55,16 +55,16 @@ int gboot_main()
 	
 		switch(num)
 		{
-			case 1:
-				// tftp_load();
+			case 1:	
+				tftp_send_request("zImage");	//tftp 下载内核文件
 			break;
 				
 			case 2:
-				// boot_linux_ram();
+				boot_linux();		//启动linux 内核
 			break;
 			
 			case 3:
-				// boot_linux_nand();
+				arp_request();			//	ARP寻址
 			break;
 			default:
 				printf("Error: wrong selection!\n\r");

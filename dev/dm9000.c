@@ -214,15 +214,25 @@ u32 dm9000_rx(u8 *data)
     u16 status,len;
     u16 tmp;
     u32 i;
-    
+    u8 ready = 0;
+	
     /*判断是否产生中断，且清除*/
     if(dm9000_reg_read(DM9000_ISR) & 0x01)
         dm9000_reg_write(DM9000_ISR,0x01);
     else
         return 0;
         
-    /*空读*/
-    dm9000_reg_read(DM9000_MRCMDX);
+    /*空读   检测是否收到包*/
+    ready = dm9000_reg_read(DM9000_MRCMDX);
+	
+	if ((ready & 0x01) != 0x01)
+    {
+    	ready = dm9000_reg_read(DM9000_MRCMDX);
+    	if ((ready & 0x01) != 0x01)
+		{
+    	    return 0;
+		}
+    }
     
     /*读取状态*/
     status = dm9000_reg_read(DM9000_MRCMD);
